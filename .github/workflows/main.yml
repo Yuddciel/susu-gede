@@ -1,0 +1,40 @@
+name: BuildJet Kernel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: buildjet-32vcpu-ubuntu-2204
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Setup timezone
+        uses: szenius/set-timezone@master
+        with:
+          timezoneLinux: "Asia/Jakarta"
+
+      - name: Run KSUNEXT Setup
+        run: |
+          rm -rf drivers/kernelsu && rm -rf KernelSU
+          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs-dev
+
+      - name: Run build KSUNEXT
+        run: |
+          sudo apt-get update
+          sudo apt-get install device-tree-compiler
+          source ksunext.sh
+          echo "ZIPNAME=${ZIPNAME}" >> $GITHUB_ENV
+
+      - name: Run SukiSU Setup
+        run: |
+          rm -rf drivers/kernelsu && rm -rf KernelSU
+          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-dev
+
+      - name: Run build SUKISU
+        run: |
+          source sukisu.sh
+          echo "ZIPNAME_SUKI=${ZIPNAME}" >> $GITHUB_ENV
+
