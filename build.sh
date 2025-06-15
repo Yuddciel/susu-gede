@@ -11,8 +11,8 @@
 # Use this script on root of kernel directory
 
 SECONDS=0 # builtin bash timer
-LOCAL_DIR=/home/kidz/
-ZIPNAME="Swordx-OSS-Surya-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
+LOCAL_DIR=/home/runner/work/susu-gede/
+ZIPNAME="Nyanraku-15-Surya-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
 TC_DIR="${LOCAL_DIR}toolchain"
 CLANG_DIR="${TC_DIR}/clang-rastamod"
 GCC_64_DIR="${LOCAL_DIR}toolchain/aarch64-linux-android-4.9"
@@ -21,7 +21,7 @@ AK3_DIR="${LOCAL_DIR}/AnyKernel3"
 DEFCONFIG="surya_defconfig"
 
 export PATH="$CLANG_DIR/bin:$PATH"
-export KBUILD_BUILD_USER="Kidz"
+export KBUILD_BUILD_USER="Mahiro"
 export KBUILD_BUILD_HOST="Ubuntud"
 export LD_LIBRARY_PATH="$CLANG_DIR/lib:$LD_LIBRARY_PATH"
 export KBUILD_BUILD_VERSION="1"
