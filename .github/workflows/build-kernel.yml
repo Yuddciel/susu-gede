@@ -14,7 +14,12 @@ jobs:
       - name: Setup timezone
         uses: szenius/set-timezone@master
         with:
-          timezoneLinux: "America/Sao_Paulo"
+          timezoneLinux: "Asia/Jakarta"
+          
+      - name: Run KSUNEXT Setup
+        run: |
+          rm -rf drivers/kernelsu && rm -rf KernelSU-Next
+          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs-dev
 
       - name: Run standard build script
         run: |
