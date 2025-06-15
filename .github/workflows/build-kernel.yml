@@ -1,11 +1,11 @@
 name: Build Kernel
 
 on:
-  push:
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -15,55 +15,26 @@ jobs:
         uses: szenius/set-timezone@master
         with:
           timezoneLinux: "Asia/Jakarta"
-          
+
       - name: Run KSUNEXT Setup
         run: |
-          rm -rf drivers/kernelsu && rm -rf KernelSU-Next
+          rm -rf drivers/kernelsu && rm -rf KernelSU
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs-dev
 
-      - name: Run standard build script
+      - name: Run build KSUNEXT
         run: |
-          export KBUILD_BUILD_USER=nobody
-          export KBUILD_BUILD_HOST=android-build
-          source build.sh
+          sudo apt-get update
+          sudo apt-get install device-tree-compiler
+          source ksunext.sh
           echo "ZIPNAME=${ZIPNAME}" >> $GITHUB_ENV
 
-      - name: Run KSU build script
+      - name: Run SukiSU Setup
         run: |
-          export KBUILD_BUILD_USER=nobody
-          export KBUILD_BUILD_HOST=android-build
-          source build.sh --su
-          echo "ZIPNAME_KSU=${ZIPNAME}" >> $GITHUB_ENV
+          rm -rf drivers/kernelsu && rm -rf KernelSU
+          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-dev
 
-      - name: Upload standard artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: standard-artifact
-          path: ${{ env.ZIPNAME }}
-
-      - name: Upload KSU artifact
-        uses: actions/upload-artifact@main
-        with:
-          name: KSU-artifact
-          path: ${{ env.ZIPNAME_KSU }}
-
-      - name: Create Telegram caption
+      - name: Run build SUKISU
         run: |
-          BUILD_DATE="$(date '+%H:%M %d/%m/%Y')"
-          HEAD="$(git rev-parse HEAD)"
-          HEAD_COMMIT="https://github.com/rd-stuffs/msm-4.14/commit/$HEAD"
-          echo -e "${BUILD_DATE}\n\n${HEAD_COMMIT}" > caption.txt
+          source sukisu.sh
+          echo "ZIPNAME_SUKI=${ZIPNAME}" >> $GITHUB_ENV
 
-      - name: Upload standard build to Telegram
-        run: |
-          caption=$(<caption.txt)
-          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-          -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -F document=@"${{ env.ZIPNAME }}" \
-          -F caption="${caption}"
-
-      - name: Upload KSU build to Telegram
-        run: |
-          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-          -F chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -F document=@"${{ env.ZIPNAME_KSU }}"
