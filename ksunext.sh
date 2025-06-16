@@ -1,6 +1,6 @@
 #!/bin/sh
 # Compile script for Compiling kernel
-# Copyright (c) Mahiro X Rapli
+# Copyright (c) RapliVx Aka Rafi Aditya
 
 # Setup
 PHONE="Surya"
@@ -8,187 +8,180 @@ DEFCONFIG=surya_defconfig
 COMPILERDIR="$(pwd)/../zyc-clang"
 CLANG="ZYC Clang"
 CODENAME="[A15]"
-ZIPNAME="Lucifer-KSUNEXT-$(date '+%Y%m%d-%H%M').zip"
+ZIPNAME="Lucifer-Kernel-Surya-$(date '+%Y%m%d-%H%M').zip"
+CAPTION="Latest SUSFS & KSUNEXT | Spoof 6.6 GKI | Bypass Charging"
 BOT_TOKEN="7485743487:AAEKPw9ubSKZKit9BDHfNJSTWcWax4STUZs"
 CHAT_ID="-1002354747626"
+MESSAGE=""
+MESSAGE_ERROR="Error Build For $PHONE Aborted"
 kernel="out/arch/arm64/boot/Image.gz"
 dtb="out/arch/arm64/boot/dtb.img"
 dtbo="out/arch/arm64/boot/dtbo.img"
 export KBUILD_BUILD_USER=Mahiroo
 export KBUILD_BUILD_HOST=HiraTeam
 
-# Color Codes
+# Header
 cyan="\033[96m"
 green="\033[92m"
 red="\033[91m"
-reset="\033[0m"
+blue="\033[94m"
+yellow="\033[93m"
 
-# Start timer
-SECONDS=0
+echo -e "$cyan===========================\033[0m"
+echo -e "$cyan= START COMPILING KERNEL  =\033[0m"
+echo -e "$cyan===========================\033[0m"
 
-# Escape function for MarkdownV2 Telegram messages
-escape_markdownv2() {
-  echo "$1" | sed -e 's/\\/\\\\/g' \
-                  -e 's/`/\\`/g' \
-                  -e 's/\*/\\*/g' \
-                  -e 's/_/\\_/g' \
-                  -e 's/{/\\{/g' \
-                  -e 's/}/\\}/g' \
-                  -e 's/\[/\\[/g' \
-                  -e 's/\]/\\]/g' \
-                  -e 's/\(/\\(/g' \
-                  -e 's/\)/\\)/g' \
-                  -e 's/#/\\#/g' \
-                  -e 's/\+/\\+/g' \
-                  -e 's/-/\\-/g' \
-                  -e 's/!/\\!/g' \
-                  -e 's/\./\\./g' \
-                  -e 's/&/\\&/g'
+echo -e "$blue...KSABAR...\033[0m"
+
+echo -e -ne "$green== (10%)\r"
+sleep 0.7
+echo -e -ne "$green=====                     (33%)\r"
+sleep 0.7
+echo -e -ne "$green=============             (66%)\r"
+sleep 0.7
+echo -e -ne "$green=======================   (100%)\r"
+echo -ne "\n"
+
+# Clone AOSP Clang
+function clang() {
+if [ -d $COMPILERDIR ] ; then
+echo -e " "
+echo -e "\n$green[!] Lets's Build UwU...\033[0m \n"
+else
+echo -e " "
+echo -e "\n$red[!] clang Dir Not Found!!!\033[0m \n"
+sleep 2
+echo -e "$green[+] Wait.. Cloning AOSP-clang...\033[0m \n"
+sleep 2
+wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz"
+    rm -rf $COMPILERDIR 
+    mkdir $COMPILERDIR 
+    tar -xvf zyc-clang.tar.gz -C $COMPILERDIR
+    rm -rf zyc-clang.tar.gz
+sleep 1
+echo
+echo -e "\n$green[!] Lets's Build UwU...\033[0m \n"
+sleep 1
+fi
 }
 
-# Telegram send message function with MarkdownV2 parsing
-send_telegram_message() {
-  local text="$1"
-  local escaped_text
-  escaped_text=$(escape_markdownv2 "$text")
+# URL API Telegram untuk mengirim pesan
+URL="https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
 
-  curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
-    -d chat_id="$CHAT_ID" \
-    -d text="$escaped_text" \
-    -d parse_mode="MarkdownV2" > /dev/null
+# Data yang akan dikirimkan
+DATA="chat_id=$CHAT_ID&text=$MESSAGE"
+
+# Kirim permintaan POST ke API Telegram
+curl -s -X POST "$URL" -d "$DATA"
+
+function clean() {
+    echo -e "\n"
+    echo -e "$red[!] CLEANING UP \\033[0m"
+    echo -e "\n"
+    rm -rf log.txt
 }
 
-# Telegram send document function with caption in MarkdownV2
-send_telegram_document() {
-  local file_path="$1"
-  local caption="$2"
-  local escaped_caption
-  escaped_caption=$(escape_markdownv2 "$caption")
+# Make Defconfig
 
-  curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendDocument" \
-    -F chat_id="$CHAT_ID" \
-    -F document=@"$file_path" \
-    -F caption="$escaped_caption" > /dev/null
-}
+function build_kernel() {
+    export PATH="$COMPILERDIR/bin:$PATH"
+    make -j$(nproc --all) O=out ARCH=arm64 ${DEFCONFIG}
+    if [ $? -ne 0 ]
+then
+    echo -e "\n"
+    echo -e "$red [!] BUILD FAILED \033[0m"
+    echo -e "\n"
+else
+    echo -e "\n"
+    echo -e "$green==================================\033[0m"
+    echo -e "$green= [!] START BUILD ${DEFCONFIG}\033[0m"
+    echo -e "$green==================================\033[0m"
+    echo -e "\n"
+fi
 
-# Print start message
-echo -e "${cyan}===========================$reset"
-echo -e "${cyan}=  START COMPILING KERNEL  =$reset"
-echo -e "${cyan}===========================$reset"
+# Speed up build process
+MAKE="./makeparallel"
 
-# Setup compiler function
-clang() {
-  if [ -d "$COMPILERDIR" ]; then
-    echo -e "\n${green}[!] Let's Build UwU...${reset}\n"
-  else
-    echo -e "\n${red}[!] AOSP-clang directory not found!!!${reset}\n"
-    echo -e "${green}[+] Cloning AOSP-clang...${reset}\n"
-    wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz"
-    rm -rf "$COMPILERDIR"
-    mkdir "$COMPILERDIR"
-    tar -xf zyc-clang.tar.gz -C "$COMPILERDIR"
-    rm -f zyc-clang.tar.gz
-    echo -e "\n${green}[!] Let's Build UwU...${reset}\n"
-  fi
-}
+# Build Start Here
 
-# Cleanup function
-clean() {
-  echo -e "\n${red}[!] CLEANING UP ${reset}\n"
-  rm -rf log.txt out
-  make mrproper
-}
-
-# Build kernel function
-build_kernel() {
-  export PATH="$COMPILERDIR/bin:$PATH"
-  make -j$(nproc) O=out ARCH=arm64 $DEFCONFIG
-
-  if [ $? -ne 0 ]; then
-    echo -e "\n${red}[!] BUILD FAILED${reset}\n"
-    send_telegram_message "❌ *Build Failed* for device: $PHONE"
-    exit 1
-  fi
-
-  echo -e "\n${green}==================================${reset}"
-  echo -e "${green}= [!] START BUILD $DEFCONFIG${reset}"
-  echo -e "==================================${reset}\n"
-
-  make -j$(nproc) \
+   make -j$(nproc --all) \
     O=out \
     ARCH=arm64 \
-    LLVM=1 LLVM_IAS=1 \
-    AR=llvm-ar NM=llvm-nm LD=ld.lld \
-    OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip \
+    LLVM=1 \
+    LLVM_IAS=1 \
+    AR=llvm-ar \
+    NM=llvm-nm \
+    LD=ld.lld \
+    OBJCOPY=llvm-objcopy \
+    OBJDUMP=llvm-objdump \
+    STRIP=llvm-strip \
     CC=clang \
     DTC_EXT=dtc \
     CROSS_COMPILE=aarch64-linux-gnu- \
     CROSS_COMPILE_ARM32=arm-linux-gnueabi- 2>&1 | tee log.txt
+    
+    # Zipping
 
-  if [ ! -f "$kernel" ]; then
-    echo -e "${red}[!] Kernel Image not found, build failed!${reset}"
-    send_telegram_message "❌ Kernel build failed. Check logs."
-    exit 1
-  fi
-
-  echo -e "${green}=============================================${reset}"
-  echo -e "${green}= [+] Zipping up ...${reset}"
-  echo -e "=============================================${reset}"
-
-  # Clone or copy AnyKernel3 (example)
-  if [ ! -d AnyKernel3 ]; then
-    if ! git clone -q https://github.com/rinnsakaguchi/AnyKernel3.git -b FSociety AnyKernel3; then
-      echo -e "${red}AnyKernel3 repo not found and clone failed! Aborting...${reset}"
-      send_telegram_message "❌ AnyKernel3 repo not found & clone failed."
-      exit 1
+    if [ -f out/arch/arm64/boot/Image ] ; then
+            echo -e "$green=============================================\033[0m"
+            echo -e "$green= [+] Zipping up ...\033[0m"
+            echo -e "$green=============================================\033[0m"
+    if [ -d "$AK3_DIR" ]; then
+            cp -r $AK3_DIR AnyKernel3
+        elif ! git clone -q https://github.com/rinnsakaguchi/AnyKernel3.git -b FSociety; then
+                echo -e "\nAnyKernel3 repo not found locally and couldn't clone from GitHub! Aborting..."
+        fi
+            cp $kernel $dtb $dtbo AnyKernel3
+            cd AnyKernel3
+            git checkout FSociety &> /dev/null
+            zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
+            cd ..
+            rm -rf AnyKernel3
     fi
-  fi
 
-  cp "$kernel" "$dtb" "$dtbo" AnyKernel3/
-  cd AnyKernel3 || exit
-  git checkout FSociety &> /dev/null
-  zip -r9 "../$ZIPNAME" * -x .git README.md *placeholder
-  cd ..
 
-  if [ -f "$ZIPNAME" ]; then
-    duration="$((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s)"
-    CPU_INFO=${RUNNER_CPU:-$(nproc)}
+    if [ -e "$ZIPNAME" ] ; then
+    echo -e "$green===========================\033[0m"
+    echo -e "$green=  SUCCESS COMPILE KERNEL \033[0m"
+    echo -e "$green=  Device     : $PHONE \033[0m"
+    echo -e "$green=  Defconfig  : $DEFCONFIG \033[0m"
+    echo -e "$green=  Toolchain  : $CLANG \033[0m"
+    echo -e "$green=  Codename   : $CODENAME \033[0m"
+    echo -e "$green=  Zipname    : $ZIPNAME \033[0m"
+    echo -e "$green=  Completed in $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) \033[0m "
+    echo -e "$green===========================\033[0m"
+    else
+    echo -e "$red [!] FIX YOUR KERNEL SOURCE BRUH !?\033[0m"
+    send_log
+    fi
 
-    CAPTION="\
-*===== KERNEL BUILD COMPLETE =====*\n\
-\n\
-*Device*      : $PHONE\n\
-*Defconfig*   : $DEFCONFIG\n\
-*Toolchain*   : $CLANG\n\
-*Codename*    : $CODENAME\n\
-*Zipname*     : $ZIPNAME\n\
-*CPU*         : $CPU_INFO cores\n\
-*Duration*    : $duration\n\
-*Features*    : Latest SUSFS \& KSU | Spoof Uname 6\.6 GKI | Bypass Charging\n\
-\n\
-_Build by Mahiroo @ HiraTeam_"
+    if [ -e "$ZIPNAME" ] ; then 
+    echo -e "$green=============================================\033[0m"
+    echo -e "$green= [+] Uploading ...\033[0m"
+    echo -e "$green=============================================\033[0m"
 
-    send_telegram_message "$CAPTION"
-    send_telegram_document "$ZIPNAME" "$CAPTION"
+    URL="https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
 
-    echo -e "${green}=============================${reset}"
-    echo -e "${green}= SUCCESS COMPILE KERNEL  =${reset}"
-    echo -e "${green}= Device     : $PHONE       =${reset}"
-    echo -e "${green}= Defconfig  : $DEFCONFIG  =${reset}"
-    echo -e "${green}= Toolchain  : $CLANG      =${reset}"
-    echo -e "${green}= Codename   : $CODENAME   =${reset}"
-    echo -e "${green}= Zipname    : $ZIPNAME    =${reset}"
-    echo -e "${green}= CPU        : $CPU_INFO cores =${reset}"
-    echo -e "${green}= Duration   : $duration   =${reset}"
-    echo -e "${green}=============================${reset}"
+    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F caption="$CAPTION" -F chat_id="$CHAT_ID"
 
-  else
-    echo -e "${red}[!] ZIP NOT FOUND! BUILD FAILED${reset}"
-    send_telegram_message "❌ ZIP file not found. Build failed."
-    exit 1
-  fi
+    fi
+
 }
 
+# Fungsi untuk mengirim pesan dengan file
+function send_log() {
+    # File yang ingin dikirim
+    FILE="log.txt"
+
+    # URL untuk mengirim file dengan caption
+    URL="https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
+
+    # Perintah curl untuk mengirim file
+    curl -F "chat_id=$CHAT_ID" -F "document=@${FILE}" -F "caption=${MESSAGE_ERROR}" $URL
+
+}
+
+# execute
 clang
 clean
 build_kernel
