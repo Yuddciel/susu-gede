@@ -9,10 +9,21 @@ COMPILERDIR="$(pwd)/../zyc-clang"
 CLANG="ZYC-Clang"
 CODENAME="[A15]"
 ZIPNAME="Lucifer-KSUNEXT-$(date '+%Y%m%d-%H%M').zip"
-CAPTION="Lucifer Kernel $PHONE Compile Complete\nClang: ZYC-Clang\nLatest SUSFS & KSU\nSpoof Uname 6.6 GKI\nBypass Charging"
+CAPTION="============================\n\
+=  KERNEL BUILD COMPLETE  \n\
+=  Device     : $PHONE       \n\
+=  Defconfig  : $DEFCONFIG \n\
+=  Toolchain  : $CLANG      \n\
+=  Codename   : $CODENAME  \n\
+=  Zipname    : $ZIPNAME   \n\
+=  CPU        : ${RUNNER_CPU:-$(nproc)} cores \n\
+=  Duration   : $((SECONDS / 60)) minute(s) and $((SECONDS % 60)) second(s) \n\
+=  Features   : Latest SUSFS & KSU | Spoof Uname 6.6 GKI | Bypass Charging\n\
+============================\n\n\
+Build by Mahiroo @ HiraTeam"
 BOT_TOKEN="7485743487:AAEKPw9ubSKZKit9BDHfNJSTWcWax4STUZs"
 CHAT_ID="-1002354747626"
-MESSAGE="🚀 Build For A15 Started\nUsing ZYC-Clang"
+MESSAGE="🚀 Build For A15 Started Using ZYC-Clang"
 MESSAGE_ERROR="Error Build For $PHONE Aborted"
 kernel="out/arch/arm64/boot/Image.gz"
 dtb="out/arch/arm64/boot/dtb.img"
