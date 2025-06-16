@@ -175,7 +175,7 @@ MAKE="./makeparallel"
 
     URL="https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
 
-    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F caption="$CAPTION" -F chat_id="$CHAT_ID"
+    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F chat_id="$CHAT_ID"
 
     fi
 
