@@ -22,7 +22,7 @@ CAPTION="============================\n\
 Build by Mahiroo @ HiraTeam"
 BOT_TOKEN="7485743487:AAEKPw9ubSKZKit9BDHfNJSTWcWax4STUZs"
 CHAT_ID="-1002354747626"
-MESSAGE="🚀 Build For A15 Started Using ZYC-Clang"
+MESSAGE=""
 MESSAGE_ERROR="Error Build For $PHONE Aborted"
 kernel="out/arch/arm64/boot/Image.gz"
 dtb="out/arch/arm64/boot/dtb.img"
@@ -172,7 +172,7 @@ MAKE="./makeparallel"
 
     URL="https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
 
-    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F chat_id="$CHAT_ID"
+    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F caption="$CAPTION" -F chat_id="$CHAT_ID"
 
     fi
 
