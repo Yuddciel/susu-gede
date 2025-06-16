@@ -25,13 +25,3 @@ jobs:
           source ksunext.sh
           echo "ZIPNAME=${ZIPNAME}" >> $GITHUB_ENV
 
-      - name: Run SukiSU Setup
-        run: |
-          rm -rf drivers/kernelsu && rm -rf Kernelsu-Next
-          curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-dev
-
-      - name: Run build SUKISU
-        run: |
-          source sukisu.sh
-          echo "ZIPNAME_SUKI=${ZIPNAME}" >> $GITHUB_ENV
-
