@@ -18,7 +18,7 @@ jobs:
 
       - name: Run KSUNEXT Setup
         run: |
-          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs-dev
+          curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/next/kernel/setup.sh" | bash -
 
       - name: Run build KSUNEXT
         run: |
