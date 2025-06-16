@@ -5,20 +5,20 @@
 # Setup
 PHONE="Surya"
 DEFCONFIG=surya_defconfig
-COMPILERDIR="$(pwd)/../aosp-clang"
-CLANG="AOSP Clang"
+COMPILERDIR="$(pwd)/../zyc-clang"
+CLANG="ZYC-Clang"
 CODENAME="[A15]"
 ZIPNAME="Lucifer-KSUNEXT-$(date '+%Y%m%d-%H%M').zip"
-CAPTION="Lucifer Kernel $PHONE Compile Complete, Tong Hilap Mangan"
+CAPTION="Lucifer Kernel $PHONE Compile Complete\nClang: ZYC-Clang\nLatest SUSFS & KSU\nSpoof Uname 6.6 GKI\nBypass Charging"
 BOT_TOKEN="7485743487:AAEKPw9ubSKZKit9BDHfNJSTWcWax4STUZs"
 CHAT_ID="-1002354747626"
-MESSAGE="🚀 Build For A15 Started"
+MESSAGE="🚀 Build For A15 Started\nUsing ZYC-Clang"
 MESSAGE_ERROR="Error Build For $PHONE Aborted"
 kernel="out/arch/arm64/boot/Image.gz"
 dtb="out/arch/arm64/boot/dtb.img"
 dtbo="out/arch/arm64/boot/dtbo.img"
 export KBUILD_BUILD_USER=Mahiroo
-export KBUILD_BUILD_HOST=GitUbuntu
+export KBUILD_BUILD_HOST=HiraTeam
 
 # Header
 cyan="\033[96m"
@@ -53,11 +53,11 @@ echo -e "\n$red[!] AOSP-clang Dir Not Found!!!\033[0m \n"
 sleep 2
 echo -e "$green[+] Wait.. Cloning AOSP-clang...\033[0m \n"
 sleep 2
-wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O "aosp-clang.tar.gz"
+wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz"
     rm -rf $COMPILERDIR 
     mkdir $COMPILERDIR 
-    tar -xvf aosp-clang.tar.gz -C $COMPILERDIR
-    rm -rf aosp-clang.tar.gz
+    tar -xvf zyc-clang.tar.gz -C $COMPILERDIR
+    rm -rf zyc-clang.tar.gz
 sleep 1
 echo
 echo -e "\n$green[!] Lets's Build UwU...\033[0m \n"
