@@ -5,8 +5,8 @@
 # Setup
 PHONE="Surya"
 DEFCONFIG=surya_defconfig
-COMPILERDIR="$(pwd)/../aosp-clang"
-CLANG="AOSP Clang"
+COMPILERDIR="$(pwd)/../zyc-clang"
+CLANG="ZYC Clang"
 CODENAME="[A15]"
 ZIPNAME="Lucifer-SUKISU-$(date '+%Y%m%d-%H%M').zip"
 CAPTION="Lucifer Kernel $PHONE Compile Complete, Tong Hilap Mangan"
@@ -49,15 +49,15 @@ echo -e " "
 echo -e "\n$green[!] Lets's Build UwU...\033[0m \n"
 else
 echo -e " "
-echo -e "\n$red[!] AOSP-clang Dir Not Found!!!\033[0m \n"
+echo -e "\n$red[!] clang Dir Not Found!!!\033[0m \n"
 sleep 2
 echo -e "$green[+] Wait.. Cloning AOSP-clang...\033[0m \n"
 sleep 2
-wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r547379.tar.gz -O "aosp-clang.tar.gz"
+wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz"
     rm -rf $COMPILERDIR 
     mkdir $COMPILERDIR 
-    tar -xvf aosp-clang.tar.gz -C $COMPILERDIR
-    rm -rf aosp-clang.tar.gz
+    tar -xvf zyc-clang.tar.gz -C $COMPILERDIR
+    rm -rf zyc-clang.tar.gz
 sleep 1
 echo
 echo -e "\n$green[!] Lets's Build UwU...\033[0m \n"
@@ -162,7 +162,7 @@ MAKE="./makeparallel"
 
     URL="https://api.telegram.org/bot$BOT_TOKEN/sendDocument"
 
-    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F caption="$CAPTION" -F chat_id="$CHAT_ID"
+    curl -s -X POST "$URL" -F document=@"$ZIPNAME" -F chat_id="$CHAT_ID"
 
     fi
 
