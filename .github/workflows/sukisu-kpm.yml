@@ -17,11 +17,6 @@ jobs:
     - name: Fetch Clang
       run: |  
             mkdir clang && wget "$(curl -s https://raw.githubusercontent.com/ZyCromerZ/Clang/main/Clang-main-link.txt)" -O "zyc-clang.tar.gz" -RLO && tar -C clang/ -xf zyc-clang.tar.gz
-
-    - name: Fetch Gcc
-      run: |
-           git clone https://github.com/greenforce-project/gcc-arm64 -b main --depth=1 gcc64
-           git clone https://github.com/greenforce-project/gcc-arm -b main --depth=1 gcc32
      
     - name: Fetch SUKISU
       run: |
@@ -34,12 +29,11 @@ jobs:
     - name: Build Kernell
       run: |
            export ARCH=arm64
-           export PATH="${PWD}/clang/bin:${PWD}gcc64/bin:${PWD}gcc32/bin:$PATH"  
            export KBUILD_BUILD_USER=Mahiro
            export KBUILD_BUILD_HOST=HiraTeam
            export KBUILD_COMPILER_STRING="${PWD}/clang"
            make O=out ARCH=arm64 surya_defconfig  
-           make -j$(nproc --all) O=out \ ARCH=arm64 \ LLVM=1 \ LLVM_IAS=1 \ CLANG_TRIPLE=aarch64-linux-gnu- \ CROSS_COMPILE=aarch64-linux-gnu- \ CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \ CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+           make -j$(nproc --all) O=out \ ARCH=arm64 \ LLVM=1 \ LLVM_IAS=1 \ CC=clang \ CLANG_TRIPLE=aarch64-linux-gnu- \ CROSS_COMPILE=aarch64-linux-gnu- \ CROSS_COMPILE_COMPAT=arm-linux-gnueabi- \ CROSS_COMPILE_ARM32=arm-linux-gnueabi-
            mv out/.config out/surya_defconfig.txt
            
     - name: Upload defconfig 
